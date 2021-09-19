@@ -1,0 +1,76 @@
+//自己敲的代码
+//时间复杂度O(n^2)
+//7.35% 14.36%
+//自己推出的dp[n] = dp[n / k] + p , n = k * p
+//dp[n] = n , n != k * p
+class Solution {
+public:
+    int minSteps(int n) {
+        vector<int> dp;                         //动态规划数组
+        dp.push_back(0);
+        dp.push_back(0);
+        dp.push_back(2);                        //初始化n为0，1，2的情况
+        for (int i = 3; i <= n; i++) {          //循环直到数组包含到n的解
+            for (int p = 2; p < i; p++) {       //找出满足k*p = n的所有可能
+                if(p == 2){                     //先假设n为质数
+                    dp.push_back(i);
+                }   
+                if (i % p == 0) {
+                    int temp = i / p;
+                    temp += dp[p];
+                    if (dp[i] > temp) {         //在所有可能中选择最优解
+                        dp[i] = temp;
+                    }
+                }
+            }
+        }
+        return dp[n];
+    }
+};
+//官方题解
+//官方给出dp[n] = dp[j] + n / j , j 可以整除 n
+//边界条件为dp[1] = 0
+//细节：在n的因数 j 和 n / j 当中，必定存在一个因数小于根号 n ，故可以将时间复杂度降至 O(n * 根号n)
+class Solution {
+public:
+    int minSteps(int n) {
+        vector<int> f(n + 1);                           //动态数组的创建
+        for (int i = 2; i <= n; ++i) {                  //循环得到直到n的解
+            f[i] = INT_MAX;                             //给f[i]赋值避免越界
+            for (int j = 1; j * j <= i; ++j) {          //找出所有因数
+                if (i % j == 0) {
+                    f[i] = min(f[i], f[j] + i / j);     //美妙之处，这里就是官方解和我的答案之间最大的区别
+                    f[i] = min(f[i], f[i / j] + j);     //通过在循环中放置两种条件而达到时间复杂度下降的操作
+                }
+            }
+        }
+        return f[n];
+    }
+};
+//官方题解二
+//震撼我一整年，完全没想到，但应该想到的，非常难受
+//dp[n] = dp[n / j] + j
+//dp[n / j] = dp[n / j / k] + k
+//如果我们能够一直拆解下去，得到n = n1 * n2 * ... * nn
+//那么代价就是n1 + n2 + .. + nn
+//最优解即为其中所有可能中最小的和
+//因为如果 n1 不为素数
+//那么n1 = k1 * k2
+//可以轻易证明 k1 + k2 <= k1 * k2 (k1,k2均为正整数)
+//因此得到推论，当n1,n2,...,nn均为素数时，即为最优解
+class Solution {
+public:
+    int minSteps(int n) {
+        int ans = 0;                            //最后输出结果
+        for (int i = 2; i * i <= n; ++i) {      //如果i的平方大于n,那么从小到大的循环很明显表明了不存在更大的i能通过循环里的判断条件了
+            while (n % i == 0) {                //证明满足判断条件的i为质数：如果i不为质数且n % i == 0，那么存在比i小的数p使得i % p == 0，又因为n % i == 0，所以不成立
+                n /= i;
+                ans += i;
+            }
+        }
+        if (n > 1) {                            //证明最后的n为质数：如果这里的n不为质数，那么存在比n小的数p使得，p % n == 0，在上面的循环中已经排除这种可能了
+            ans += n;
+        }
+        return ans;
+    }
+};
