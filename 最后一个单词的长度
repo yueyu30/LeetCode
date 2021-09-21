@@ -1,0 +1,20 @@
+//看到题目的刚开始，第一想法便是反向遍历
+//自己的代码
+//时间复杂度O(n)
+//100% 89.09%
+class Solution {
+public:
+    int lengthOfLastWord(string s) {
+        int i = s.length() - 1;               //从末尾开始遍历
+        int ans = 0;                          //最后单词的长度
+        while(i >= 0 && s[i] == ' '){         //去除末尾的空格并防止溢出
+            i--;
+        }
+        while(i >= 0 && s[i] != ' '){         //计数
+            ans++;
+            i--;
+        }
+        return ans;
+    }
+};
+//简单题目，和官方解一致，没什么好说的
