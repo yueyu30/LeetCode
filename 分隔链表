@@ -1,0 +1,75 @@
+//我的想法
+//将链表的长度获取，然后通过除和余的手法来获取每一区块的长度
+//时间复杂度O(n^2)
+//79.33% 5.13%
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    vector<ListNode*> splitListToParts(ListNode* head, int k) {
+        vector<ListNode*> output(k);                                              //输出数组
+        int length = 0;                                                           //链表长度
+        int times = 0;                                                            //每个区块的最短长度
+        int overfloor = 0;                                                        //多少区块会多出一个长度
+        ListNode* p = head;
+        while(p != NULL){                                                         //获取链表的长度
+            length++;
+            p = p->next;
+        }
+        times = length / k;                                                       
+        overfloor = length % k;
+        for(int i = 0; head != NULL && i < k; i++,overfloor--){                    //对输出数组进行赋值
+            if(overfloor > 0)times++;                                              //多出来的区块多循环一次
+            for(int x = 0; head != NULL && x < times; x++,head = head->next){      //每个区块的循环次数
+                ListNode* s = new ListNode();
+                s->val = head->val;
+                if(x == 0){
+                    output[i] = s;
+                    p = output[i];
+                }
+                else{
+                    p->next = s;
+                    p = s;
+                }
+            }
+            if(overfloor > 0)times--;                                               //将times复原
+        }
+        return output;
+    }
+};
+//官方题解
+//大致与我思路一致，在细节上处理的很好
+class Solution {
+public:
+    vector<ListNode*> splitListToParts(ListNode* head, int k) {
+        int n = 0;
+        ListNode *temp = head;
+        while (temp != nullptr) {
+            n++;
+            temp = temp->next;
+        }
+        int quotient = n / k, remainder = n % k;
+
+        vector<ListNode*> parts(k,nullptr);
+        ListNode *curr = head;
+        for (int i = 0; i < k && curr != nullptr; i++) {
+            parts[i] = curr;
+            int partSize = quotient + (i < remainder ? 1 : 0);          //这里很棒
+            for (int j = 1; j < partSize; j++) {
+                curr = curr->next;
+            }
+            ListNode *next = curr->next;
+            curr->next = nullptr;
+            curr = next;
+        }
+        return parts;
+    }
+};
