@@ -1,0 +1,35 @@
+//我的代码
+//我只能想出循环的方法
+//时间复杂度O(n的三次开方)
+//73.21% 50.49%
+class Solution {
+public:
+    bool isPowerOfThree(int n) {
+        if(n <= 0)return false;
+        int i = 1;
+        while(i < n){
+            if(INT_MAX / i < 3)break;
+            i *= 3;
+        }
+        if(i != n)return false;
+        return true;
+    }
+};
+//官方题解
+//同样思路
+class Solution {
+public:
+    bool isPowerOfThree(int n) {
+        while (n && n % 3 == 0) {
+            n /= 3;
+        }
+        return n == 1;
+    }
+};
+//离谱的解
+class Solution {
+public:
+    bool isPowerOfThree(int n) {
+        return n > 0 && 1162261467 % n == 0;          //利用的是int类型里面最大的三的幂
+    }
+};
