@@ -1,0 +1,38 @@
+//加法器原理
+//我的计算机组成原理学的真的很不好
+//100% 10.24%
+class Solution {
+public:
+    int getSum(int a, int b) {
+        int result = 0;                                   //最终结果
+        int flag = 0;                                     //进位
+        for(int i = 0; i < 32; i++){
+            bool first = a & (1<<i);                      //取两数的某一位
+            bool second = b & (1<<i);
+            int temp;
+            temp = (flag ^ (first ^ second)) ? 1 : 0;
+            temp <<= i;
+            result |= temp;
+            if(flag){
+                if(!first && !second)flag = 0;
+            }
+            else{
+                if(first && second)flag = 1;
+            }
+        }
+        return result;
+    }
+};
+//官方解法
+//因为a+b可以转换为a和b的无进位和与a和b的进位之和
+class Solution {
+public:
+    int getSum(int a, int b) {
+        while (b != 0) {                                          //存在进位数时
+            unsigned int carry = (unsigned int)(a & b) << 1;      //a和b的进位数
+            a = a ^ b;                                            //a和b的无进位之和
+            b = carry;
+        }
+        return a;
+    }
+};
