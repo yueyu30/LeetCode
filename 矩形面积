@@ -1,0 +1,17 @@
+//90.90% 63.60%
+class Solution {
+public:
+    int computeArea(int ax1, int ay1, int ax2, int ay2, int bx1, int by1, int bx2, int by2) {
+        int maxsize = (ax2 - ax1) * (ay2 - ay1) + (bx2 - bx1) * (by2 - by1);                    //两个矩形的总面积
+        int covered = 0;                                                                        //重叠部分面积
+        if(bx1 >= ax2 || ax1 >= bx2 || by1 >= ay2 || ay1 >= by2)return maxsize;                 //如果不相交
+        else{
+            int xmin = max(ax1,bx1);
+            int xmax = min(ax2,bx2);
+            int ymin = max(ay1,by1);
+            int ymax = min(ay2,by2);
+            covered = (xmax - xmin) * (ymax - ymin);
+        }
+        return maxsize - covered;
+    }
+};
