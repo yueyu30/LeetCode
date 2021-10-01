@@ -1,0 +1,32 @@
+//第一次自主使用哈希表
+//78.83% 6.19%
+class Solution {
+public:
+    string destCity(vector<vector<string>>& paths) {
+        unordered_map <string,string> umap;
+        for(vector<string> list : paths){
+            umap.emplace(list[0],list[1]);
+        }
+        for(vector<string> list : paths){
+            if(umap.count(list[1]) == 0)return list[1];           //如果终点站没有出现在起点站的位置，那么这就是最终地点
+        }
+        return 0;
+    }
+};
+//官方题解
+//只需要将起点站装入哈希表，如果终点站不在哈希表中那么就是最终地点
+class Solution {
+public:
+    string destCity(vector<vector<string>> &paths) {
+        unordered_set<string> citiesA;
+        for (auto &path : paths) {
+            citiesA.insert(path[0]);
+        }
+        for (auto &path : paths) {
+            if (!citiesA.count(path[1])) {
+                return path[1];
+            }
+        }
+        return "";
+    }
+};
