@@ -1,0 +1,73 @@
+//好难，我只能完成得出小数，没法获得循环节
+class Solution {
+public:
+    string fractionToDecimal(int numerator, int denominator) {
+        string result;
+        int point = 0;                                                                                  //判断是否加过小数点
+        while(numerator != 0 && result.length() < 100){
+            if(numerator / denominator < 0 && result.empty())result.append(1,'-');
+            if(abs(numerator / denominator) >= 1){                                                      //当分子大于分母时
+                int times = 10;
+                while(abs(numerator / denominator) >= times){                                           //将分母变成和分子同一数量级
+                    times *= 10;
+                }
+                times /= 10;
+                for(int i = 1; i < 10; i++){
+                    if(abs(numerator) - abs(denominator * i * times) < abs(denominator)*times){
+                        result.append(1,i + '0');
+                        numerator+=abs(denominator*i*times)*(numerator<0?1:-1);
+                        break;
+                    }
+                }
+                while(abs(numerator) < times / 10){                                                     //补上不同数量级之间的0，如2010/1
+                    times /= 10;
+                    result.append(1,'0');
+                }
+            }
+            else{                                                                                       //当分子小于分母
+                int times = 10;
+                while(abs(denominator / numerator) >= times){                                           //将分子变成大的一个
+                    times *= 10;
+                }
+                times /= 10;
+                if(point == 0){                                                                         //如果是第一次分子小于分母，添加小数点
+                    if(result.empty() || result.length() == 1 && result[0] == '-'){
+                        result.append(1,'0');
+                    }
+                    result.append(1,'.');
+                    point = result.find('.');
+                }
+                while(times >= 10){
+                    times /= 10;
+                    numerator *= 10;
+                    result.append(1,'0');
+                }
+                numerator *= 10;
+            }
+        }
+        return result;
+    }
+};
+//官方解居然没有C++代码？第一次遇见
+//好有道理，将每次小数的余数存储起来，发现有循环的就是无限循环小数
+class Solution {
+public:
+    string fractionToDecimal(int numerator, int denominator) {
+        if((int64_t)numerator % denominator == 0) return to_string((int64_t)numerator / denominator);       //整除情况
+
+        int64_t up = abs((int64_t)numerator), down = abs((int64_t)denominator);                             //考虑到溢出情况，将两整数化为长整数
+        string ans(((numerator < 0) ^ (denominator < 0) ? "-" : "") + to_string(up / down) + '.');          //将小数点前的数装入
+        unordered_map<int64_t, int> index;                                                                  //存储余数
+
+        for(int i = ans.size(); up = up % down * 10; ++i){
+            if(index.count(up)) {                                                                           //如果余数重复出现，说明到了循环节
+                ans.insert(begin(ans) + index[up], '(');
+                ans.push_back(')');
+                break;
+            }
+            index[up] = i;
+            ans.push_back('0' + up / down);
+        }
+        return ans;
+    }
+};
