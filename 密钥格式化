@@ -1,0 +1,52 @@
+//简单题，先将字符串中的破折号去了，再用双指针添加破折号
+//73.76% 83.00%
+class Solution {
+public:
+    string licenseKeyFormatting(string s, int k) {
+        transform(s.begin(), s.end(), s.begin(), ::toupper);                    //大写
+        s.erase(std::remove(s.begin(),s.end(),'-'),s.end());                    //去除破折号
+        if(s.empty())return s;                
+        int left = s.size() - 1;                                                //左指针
+        int parts = s.length() / k + (s.length() % k == 0 ? 0 : 1);             //判断有几个部分
+        s.resize(s.size() + parts - 1);                                         //将字符串先扩大为最后结果大小
+        int right = s.size() - 1;                                               //右指针
+        for (int i = 0; left != right;) {
+            if (i != k) {                                                       //右指针没到破折号的下标时，将左指针复制过来
+                s[right] = s[left];
+                right--;
+                left--;
+                i++;
+            }
+            else {                                                            
+                s[right] = '-';
+                right--;
+                i = 0;
+            }
+        }
+        return s;
+    }
+};
+//官方题解
+class Solution {
+public:
+    string licenseKeyFormatting(string s, int k) {
+        string ans;
+        int cnt = 0;                                                //字符数量
+        
+        for (int i = s.size() - 1; i >= 0; i--) {
+            if (s[i] != '-') {
+                ans.push_back(toupper(s[i]));                       //将不是破折号的字符装入ans
+                cnt++;
+                if (cnt % k == 0) {                                 //如果装入字符到了k的整数倍，添加破折号
+                    ans.push_back('-');
+                }  
+            }
+        }
+        if (ans.size() > 0 && ans.back() == '-') {                  //刚好被k整除时，去掉最后的破折号
+            ans.pop_back();
+        }
+        reverse(ans.begin(), ans.end());                            //将ans反转
+        
+        return ans;
+    }
+};
