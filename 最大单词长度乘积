@@ -1,0 +1,35 @@
+//位运算
+//将26个字母放在26位上
+//只要两数相&为零，那么两个字符串就没有相同的字母
+class Solution {
+public:
+    int maxProduct(vector<string>& words) {
+        int ans = 0;
+        int n = words.size();
+        unordered_map<int,int> repeat;
+        for(int i = 0; i < n; i++){
+            int bits = 0;
+            string word = words[i];
+            int length = word.length();
+            for(int p = 0; p < word.length(); p++){
+                bits |= 1 << (word[p] - 'a');
+            }
+            if(repeat.count(bits)){
+                if(repeat[bits] < length)repeat[bits] = length;
+            }
+            else{
+                repeat[bits] = length;
+            }
+        }
+        for(auto [word1,_] : repeat){
+            int length1 = repeat[word1];
+            for(auto [word2,_] : repeat){
+                if((word1 & word2) == 0){
+                    int length2 = repeat[word2];
+                    ans = max(ans, length1 * length2);
+                }
+            }
+        }
+        return ans;
+    }
+};
